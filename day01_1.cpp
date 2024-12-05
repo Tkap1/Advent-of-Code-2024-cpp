@@ -7,7 +7,7 @@
 
 int main()
 {
-	FILE* f = fopen("data01.txt", "r");
+	FILE* f = fopen("data.txt", "r");
 	fseek(f, 0, SEEK_END);
 	int size = ftell(f);
 	fseek(f, 0, SEEK_SET);
@@ -38,18 +38,12 @@ int main()
 			text += 1;
 		}
 	}
+	qsort(left_arr, lcount, sizeof(int), cmp_func);
+	qsort(right_arr, lcount, sizeof(int), cmp_func);
 
 	s64 result = 0;
 	for(int i = 0; i < lcount; i += 1) {
-		int l = left_arr[i];
-		int count = 0;
-		for(int j = 0; j < lcount; j += 1) {
-			int r = right_arr[j];
-			if(l == r) {
-				count += 1;
-			}
-		}
-		result += l * count;
+		result += abs(right_arr[i] - left_arr[i]);
 	}
 
 	printf("%lli\n", result);

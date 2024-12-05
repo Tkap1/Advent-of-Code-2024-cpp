@@ -4,7 +4,7 @@
 cls
 setlocal
 
-set target=day05_1.cpp
+set target=day05_2.cpp
 set compile=-nologo -Fe:main.exe -I..\my_libs2 -Zi -Od
 set linker=-link /STACK:0x4000000,0x4000000
 
