@@ -63,29 +63,18 @@ int main()
 
 	foreach_val(update_i, update, updates) {
 		b8 ok = true;
-		foreach_val(n_i, n, update.nums) {
+		foreach_ptr(n_i, n, update.nums) {
 			for(int n2_i = n_i + 1; n2_i < update.nums.count; n2_i += 1) {
-				int n2 = update.nums[n2_i];
-				if(hashmap_get(&map, v2i(n2, n))) {
+				int *n2 = &update.nums[n2_i];
+				if(hashmap_get(&map, v2i(*n2, *n))) {
+					swap(n, n2);
 					ok = false;
 				}
 			}
 		}
 		if(!ok) {
-			bad_updates.add(update);
+			result += update.nums[update.nums.count / 2];
 		}
-	}
-
-	auto fn = [&map](int* a, int* b){
-		if(hashmap_get(&map, v2i(*b, *a))) {
-			return true;
-		}
-		return false;
-	};
-
-	foreach_val(update_i, update, bad_updates) {
-		bubble_sort_list(&update.nums, fn);
-		result += update.nums[update.nums.count / 2];
 	}
 
 	printf("%lli\n", result);
