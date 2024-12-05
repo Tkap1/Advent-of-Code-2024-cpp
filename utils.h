@@ -1,4 +1,6 @@
 
+#define assert(cond) if(!(cond)) { on_failed_assert(#cond, __FILE__, __FUNCTION__, __LINE__); }
+
 func void consume_space(char** in_text)
 {
 	char* text = *in_text;
@@ -49,7 +51,7 @@ func char* read_file(char* path)
 func b8 consume_number(char** str, int* out_val)
 {
 	char* end = null;
-	int val = strtoll(*str, &end, 10);
+	int val = (int)strtoll(*str, &end, 10);
 	b8 result = false;
 	if(end) {
 		*str = end;
@@ -59,10 +61,13 @@ func b8 consume_number(char** str, int* out_val)
 	return result;
 }
 
-template <typename t>
-func void swap(t* a, t* b)
+
+func void on_failed_assert(char* cond, char* file, char* function, int line)
 {
-	t temp = *a;
-	*a = *b;
-	*b = temp;
+	printf("\n--------------------------- FAILED ASSERT -----------------------------\n");
+	printf("\tCondition: %s\n", cond);
+	printf("\tLocation: %s(%i)\n", file, line);
+	printf("\tFunction: %s\n", function);
+	printf("-----------------------------------------------------------------------\n\n");
+	exit(1);
 }

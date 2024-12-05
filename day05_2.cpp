@@ -2,13 +2,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #include "tk_types.h"
-#define assert(...)
+#include "utils.h"
+
+#define m_tk_math_impl
+#include "tk_math.h"
+
 #define m_tk_array_impl
 #include "tk_array.h"
 
-#include "utils.h"
+#define m_tk_hashmap_impl
+#include "tk_hashmap.h"
+
 
 int main()
 {
@@ -16,18 +23,13 @@ int main()
 
 	s64 result = 0;
 
-	struct s_rule
-	{
-		int a;
-		int b;
-	};
 	struct s_update
 	{
 		s_list<int, 32> nums;
 	};
-	s_list<s_rule, 2048> rules = zero;
 	s_list<s_update, 2048> updates = zero;
 	s_list<s_update, 2048> bad_updates = zero;
+	s_hashmap<s_v2i, b8, 2048> map = zero;
 
 	while(true) {
 		if(consume_newline(&text)) { break; }
@@ -37,7 +39,7 @@ int main()
 		text += 1;
 		consume_number(&text, &b);
 
-		rules.add({a, b});
+		hashmap_set(&map, v2i(a, b), true);
 
 		consume_newline(&text);
 	}
@@ -62,15 +64,10 @@ int main()
 	foreach_val(update_i, update, updates) {
 		b8 ok = true;
 		foreach_val(n_i, n, update.nums) {
-			foreach_val(n2_i, n2, update.nums) {
-				if(n_i == n2_i) { continue; }
-				foreach_val(rule_i, rule, rules) {
-					if(rule.a == n && rule.b == n2) {
-						if(!(n_i < n2_i)) { ok = false; }
-					}
-					if(rule.a == n2 && rule.b == n) {
-						if(!(n2_i < n_i)) { ok = false; }
-					}
+			for(int n2_i = n_i + 1; n2_i < update.nums.count; n2_i += 1) {
+				int n2 = update.nums[n2_i];
+				if(hashmap_get(&map, v2i(n2, n))) {
+					ok = false;
 				}
 			}
 		}
@@ -79,14 +76,9 @@ int main()
 		}
 	}
 
-	auto fn = [&rules](int* a, int* b){
-		foreach_val(rule_i, rule, rules) {
-			if(rule.a == *a && rule.b == *b) {
-				return false;
-			}
-			if(rule.a == *b && rule.b == *a) {
-				return true;
-			}
+	auto fn = [&map](int* a, int* b){
+		if(hashmap_get(&map, v2i(*b, *a))) {
+			return true;
 		}
 		return false;
 	};
