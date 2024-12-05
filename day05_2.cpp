@@ -3,14 +3,6 @@
 #include <stdio.h>
 #include <string.h>
 
-template <typename t>
-static void swap(t* a, t* b)
-{
-	t temp = *a;
-	*a = *b;
-	*b = temp;
-}
-
 #include "tk_types.h"
 #define assert(...)
 #define m_tk_array_impl
@@ -20,12 +12,7 @@ static void swap(t* a, t* b)
 
 int main()
 {
-	FILE* f = fopen("data05.txt", "r");
-	fseek(f, 0, SEEK_END);
-	int size = ftell(f);
-	fseek(f, 0, SEEK_SET);
-	char* text = (char*)calloc(1, size + 1);
-	fread(text, 1, size, f);
+	char* text = read_file("data05.txt");
 
 	s64 result = 0;
 
@@ -44,13 +31,11 @@ int main()
 
 	while(true) {
 		if(consume_newline(&text)) { break; }
-		char* end = null;
-		int a = strtoll(text, &end, 10);
-		text = end;
-		text += 1;
 
-		int b = strtoll(text, &end, 10);
-		text = end;
+		int a, b;
+		consume_number(&text, &a);
+		text += 1;
+		consume_number(&text, &b);
 
 		rules.add({a, b});
 
@@ -60,9 +45,8 @@ int main()
 	s_update update = zero;
 	while(*text) {
 		if(consume_newline(&text)) { break; }
-		char* end = null;
-		int a = strtoll(text, &end, 10);
-		text = end;
+		int a;
+		consume_number(&text, &a);
 
 		update.nums.add(a);
 

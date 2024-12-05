@@ -12,12 +12,7 @@
 
 int main()
 {
-	FILE* f = fopen("data05.txt", "r");
-	fseek(f, 0, SEEK_END);
-	int size = ftell(f);
-	fseek(f, 0, SEEK_SET);
-	char* text = (char*)calloc(1, size + 1);
-	fread(text, 1, size, f);
+	char* text = read_file("data05.txt");
 
 	s64 result = 0;
 

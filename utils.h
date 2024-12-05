@@ -34,3 +34,35 @@ int cmp_func(const void* aa, const void* bb)
 	if(*a < *b) { return -1; }
 	return 0;
 }
+
+func char* read_file(char* path)
+{
+	FILE* f = fopen(path, "r");
+	fseek(f, 0, SEEK_END);
+	int size = ftell(f);
+	fseek(f, 0, SEEK_SET);
+	char* text = (char*)calloc(1, size + 1);
+	fread(text, 1, size, f);
+	return text;
+}
+
+func b8 consume_number(char** str, int* out_val)
+{
+	char* end = null;
+	int val = strtoll(*str, &end, 10);
+	b8 result = false;
+	if(end) {
+		*str = end;
+		result = true;
+	}
+	*out_val = val;
+	return result;
+}
+
+template <typename t>
+func void swap(t* a, t* b)
+{
+	t temp = *a;
+	*a = *b;
+	*b = temp;
+}
