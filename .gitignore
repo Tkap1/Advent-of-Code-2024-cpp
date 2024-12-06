@@ -32,3 +32,4 @@
 *.app
 *.ilk
 *.pdb
+data*.txt
