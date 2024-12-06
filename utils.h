@@ -1,6 +1,10 @@
 
 #define assert(cond) if(!(cond)) { on_failed_assert(#cond, __FILE__, __FUNCTION__, __LINE__); }
 
+#define array_count(arr) (sizeof((arr)) / sizeof((arr)[0]))
+
+func int strleni(char* str);
+
 func void consume_space(char** in_text)
 {
 	char* text = *in_text;
@@ -23,10 +27,29 @@ func b8 consume_newline(char** in_text)
 	return result;
 }
 
+func b8 consume_word(char** in_str, char* needle)
+{
+	char* str = *in_str;
+	int needle_len = strleni(needle);
+	b8 result = false;
+	if(strncmp(str, needle, needle_len) == 0) {
+		str += needle_len;
+		result = true;
+	}
+	*in_str = str;
+	return result;
+}
+
 func b8 is_number(char c)
 {
 	return c >= '0' && c <= '9';
 }
+
+func int char_to_int(char c)
+{
+	return c - '0';
+}
+
 
 int cmp_func(const void* aa, const void* bb)
 {
@@ -48,19 +71,19 @@ func char* read_file(char* path)
 	return text;
 }
 
-func b8 consume_number(char** str, int* out_val)
+func b8 consume_number(char** str, int* out_val, b8 allow_sign)
 {
+	if(!allow_sign && ((*str)[0] == '-' || (*str)[0] == '+')) { return false; }
 	char* end = null;
 	int val = (int)strtoll(*str, &end, 10);
 	b8 result = false;
-	if(end) {
+	if(end > *str) {
 		*str = end;
 		result = true;
 	}
 	*out_val = val;
 	return result;
 }
-
 
 func void on_failed_assert(char* cond, char* file, char* function, int line)
 {
@@ -70,4 +93,54 @@ func void on_failed_assert(char* cond, char* file, char* function, int line)
 	printf("\tFunction: %s\n", function);
 	printf("-----------------------------------------------------------------------\n\n");
 	exit(1);
+}
+
+func char** get_lines(char* str, int* out_line_count)
+{
+	char** result = (char**)calloc(1, sizeof(char*) * 16384);
+	char* cursor = str;
+	int count = 0;
+	char* curr_start = str;
+	while(true) {
+		b8 add_line = false;
+		b8 found_end = false;
+		char c = *cursor;
+		if(c == '\0') {
+			add_line = true;
+			found_end = true;
+		}
+		else if(c == '\n') {
+			add_line = true;
+		}
+		else {
+			cursor += 1;
+		}
+		if(add_line) {
+			int len = (int)(cursor - curr_start);
+			assert(len >= 0);
+			if(len > 0) {
+				result[count] = (char*)calloc(1, len + 1);
+				memcpy(result[count], curr_start, len);
+				count += 1;
+				curr_start = cursor + 1;
+			}
+			cursor += 1;
+		}
+		if(found_end) {
+			break;
+		}
+	}
+	*out_line_count = count;
+	return result;
+}
+
+func int strleni(char* str)
+{
+	return (int)strlen(str);
+}
+
+func b8 is_valid_index(s_v2i index, int x, int y)
+{
+	b8 result = index.x >= 0 && index.x < x && index.y >= 0 && index.y < y;
+	return result;
 }
