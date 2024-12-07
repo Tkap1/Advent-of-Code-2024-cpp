@@ -3,6 +3,19 @@
 
 #define array_count(arr) (sizeof((arr)) / sizeof((arr)[0]))
 
+global s_v2i offsets_8[] = {
+	{-1, -1}, {0, -1}, {1, -1},
+	{-1, 0},              {1, 0},
+	{-1, 1}, {0, 1}, {1, 1},
+};
+
+global s_v2i offsets_4[] = {
+							{0, -1},
+	{-1, 0},              {1, 0},
+							{0, 1},
+};
+
+
 func int strleni(char* str);
 
 func void consume_space(char** in_text)
@@ -71,11 +84,11 @@ func char* read_file(char* path)
 	return text;
 }
 
-func b8 consume_number(char** str, int* out_val, b8 allow_sign)
+func b8 consume_number(char** str, s64* out_val, b8 allow_sign)
 {
 	if(!allow_sign && ((*str)[0] == '-' || (*str)[0] == '+')) { return false; }
 	char* end = null;
-	int val = (int)strtoll(*str, &end, 10);
+	s64 val = strtoll(*str, &end, 10);
 	b8 result = false;
 	if(end > *str) {
 		*str = end;
@@ -92,6 +105,7 @@ func void on_failed_assert(char* cond, char* file, char* function, int line)
 	printf("\tLocation: %s(%i)\n", file, line);
 	printf("\tFunction: %s\n", function);
 	printf("-----------------------------------------------------------------------\n\n");
+	__debugbreak();
 	exit(1);
 }
 
