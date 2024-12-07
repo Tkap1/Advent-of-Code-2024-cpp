@@ -158,3 +158,12 @@ func b8 is_valid_index(s_v2i index, int x, int y)
 	b8 result = index.x >= 0 && index.x < x && index.y >= 0 && index.y < y;
 	return result;
 }
+
+func s64 concat_nums(s64 a, s64 b)
+{
+	char buffer[32] = zero;
+	sprintf(buffer, "%lli%lli", a, b);
+	char* end = null;
+	s64 result = strtoll(buffer, &end, 10);
+	return result;
+}

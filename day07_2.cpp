@@ -28,10 +28,7 @@ s64 do_op(s64 a, s64 b, int op)
 		c = a * b;
 	}
 	else if(op == 2) {
-		char buffer[32] = zero;
-		sprintf(buffer, "%lli%lli", a, b);
-		char* temp_str = buffer;
-		consume_number(&temp_str, &c, false);
+		c = concat_nums(a, b);
 	}
 	return c;
 }
