@@ -3,6 +3,17 @@
 
 #define array_count(arr) (sizeof((arr)) / sizeof((arr)[0]))
 
+
+struct s_v4i
+{
+	s_v2i a;
+	s_v2i b;
+
+	u32 hash(int n) {
+		return a.hash(n) + b.hash(n);
+	}
+};
+
 global s_v2i offsets_8[] = {
 	{-1, -1}, {0, -1}, {1, -1},
 	{-1, 0},              {1, 0},
@@ -191,4 +202,22 @@ func s64 how_many_digits(s64 val)
 		digits += 1;
 	}
 	return digits;
+}
+
+func b8 is_letter(char c)
+{
+	b8 result = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+	return result;
+}
+
+func b8 is_alpha_numeric(char c)
+{
+	b8 result = is_number(c) || is_letter(c);
+	return result;
+}
+
+func b8 operator==(s_v4i a, s_v4i b)
+{
+	b8 result = a.a == b.a && a.b == b.b;
+	return result;
 }
