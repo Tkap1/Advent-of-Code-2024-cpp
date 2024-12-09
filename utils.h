@@ -15,7 +15,6 @@ global s_v2i offsets_4[] = {
 							{0, 1},
 };
 
-
 func int strleni(char* str);
 
 func void consume_space(char** in_text)
@@ -62,7 +61,6 @@ func int char_to_int(char c)
 {
 	return c - '0';
 }
-
 
 int cmp_func(const void* aa, const void* bb)
 {
@@ -159,11 +157,38 @@ func b8 is_valid_index(s_v2i index, int x, int y)
 	return result;
 }
 
-func s64 concat_nums(s64 a, s64 b)
+func s64 concat_nums_str(s64 a, s64 b)
 {
+	assert(a >= 0);
+	assert(b >= 0);
 	char buffer[32] = zero;
 	sprintf(buffer, "%lli%lli", a, b);
 	char* end = null;
 	s64 result = strtoll(buffer, &end, 10);
 	return result;
+}
+
+func s64 concat_nums(s64 a, s64 b)
+{
+	assert(a >= 0);
+	assert(b >= 0);
+	s64 result = b;
+	int digits = 1;
+	while(b >= 10) {
+		b /= 10;
+		digits += 1;
+	}
+	result += a * (s64)pow(10, digits);
+	return result;
+}
+
+func s64 how_many_digits(s64 val)
+{
+	assert(val >= 0);
+	s64 digits = 1;
+	while(val >= 10) {
+		val /= 10;
+		digits += 1;
+	}
+	return digits;
 }
