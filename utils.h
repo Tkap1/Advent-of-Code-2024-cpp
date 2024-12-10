@@ -145,8 +145,8 @@ func char** get_lines(char* str, int* out_line_count)
 				result[count] = (char*)calloc(1, len + 1);
 				memcpy(result[count], curr_start, len);
 				count += 1;
-				curr_start = cursor + 1;
 			}
+			curr_start = cursor + 1;
 			cursor += 1;
 		}
 		if(found_end) {
@@ -220,4 +220,17 @@ func b8 operator==(s_v4i a, s_v4i b)
 {
 	b8 result = a.a == b.a && a.b == b.b;
 	return result;
+}
+
+func void consume_until_newline(char** out_str, char* out_buffer)
+{
+	char* str = *out_str;
+	while(*str != '\0' && *str != '\n') {
+		str += 1;
+	}
+	int len = (int)(str - *out_str);
+	assert(len > 0);
+	memcpy(out_buffer, *out_str, len);
+	out_buffer[len] = '\0';
+	*out_str = str;
 }
